@@ -36,7 +36,7 @@ jobs:
 
       - name: Build ep128emu
         run: |
-          scons -j2 nosdl=1 nolua=1 curl=0 utils=0 release=0
+          scons -j2 nosdl=1 nolua=1 curl=0 utils=0 release=0 nopkgconfig=1
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
