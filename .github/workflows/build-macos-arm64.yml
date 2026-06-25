@@ -47,19 +47,34 @@ jobs:
 
       - name: Prepare artifact
         run: |
+          rm -rf artifact
           mkdir -p artifact
-          if [ -d ep128emu.app ]; then
-            /usr/libexec/PlistBuddy -c "Delete :LSMinimumSystemVersion" ep128emu.app/Contents/Info.plist 2>/dev/null || true
-            /usr/libexec/PlistBuddy -c "Add :LSMinimumSystemVersion string 13.0" ep128emu.app/Contents/Info.plist
-            cp -R ep128emu.app artifact/
-          fi
-          cp -R ep128emu.app artifact/ || true
-          cp -f ep128emu artifact/ || true
-          cp -f epmakecfg artifact/ || true
-          cp -f tapeedit artifact/ || true
 
+          # Build/populate the .app bundle explicitly.
+          mkdir -p ep128emu.app/Contents/MacOS
+
+          cp -f ep128emu ep128emu.app/Contents/MacOS/ep128emu
+          chmod +x ep128emu.app/Contents/MacOS/ep128emu
+
+          if [ -f makecfg ]; then
+            cp -f makecfg ep128emu.app/Contents/MacOS/makecfg
+            chmod +x ep128emu.app/Contents/MacOS/makecfg
+          fi
+
+          if [ -f tapeedit ]; then
+            cp -f tapeedit ep128emu.app/Contents/MacOS/tapeedit
+            chmod +x ep128emu.app/Contents/MacOS/tapeedit
+          fi
+
+          # Make the app bundle explicitly compatible with macOS 13+.
+          /usr/libexec/PlistBuddy -c "Delete :LSMinimumSystemVersion" ep128emu.app/Contents/Info.plist 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :LSMinimumSystemVersion string 13.0" ep128emu.app/Contents/Info.plist
+
+          # Tar preserves executable permissions better than raw artifact upload.
+          tar -czf artifact/ep128emu-macos-arm64-test-build.tar.gz ep128emu.app
+          
       - name: Upload build artifact
         uses: actions/upload-artifact@v6
         with:
           name: ep128emu-macos-arm64-test-build
-          path: artifact/
+          path: artifact/ep128emu-macos-arm64-test-build.tar.gz
