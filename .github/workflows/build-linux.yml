@@ -32,7 +32,10 @@ jobs:
             libxcursor-dev \
             libxrender-dev \
             libxfixes-dev \
-            libfontconfig1-dev
+            libfontconfig1-dev \
+            libjpeg-dev \
+            libpng-dev \
+            zlib1g-dev
 
       - name: Build ep128emu
         run: |
