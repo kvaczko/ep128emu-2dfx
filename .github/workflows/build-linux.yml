@@ -49,3 +49,9 @@ jobs:
             ep128emu
             epmakecfg
             tapeedit
+            
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
