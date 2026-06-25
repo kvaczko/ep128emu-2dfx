@@ -1,0 +1,46 @@
+name: Build macOS Apple Silicon
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-macos-arm64:
+    runs-on: macos-15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Install build dependencies
+        run: |
+          brew update
+          brew install scons fltk portaudio libsndfile pkg-config
+
+      - name: Show tool versions
+        run: |
+          uname -a
+          arch
+          clang++ --version
+          scons --version
+          fltk-config --version || true
+          fltk-config --cxxflags --ldflags --use-images --use-gl || true
+
+      - name: Build ep128emu
+        run: |
+          scons -j2 nosdl=1 nolua=1 curl=0 utils=0 release=0
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p artifact
+          cp -R ep128emu.app artifact/ || true
+          cp -f ep128emu artifact/ || true
+          cp -f epmakecfg artifact/ || true
+          cp -f tapeedit artifact/ || true
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ep128emu-macos-arm64-test-build
+          path: artifact/
