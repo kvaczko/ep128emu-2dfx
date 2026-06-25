@@ -18,12 +18,23 @@ jobs:
           brew update
           brew install scons fltk portaudio libsndfile pkg-config
 
+      - name: Patch fltk-config weak framework output for SCons
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/ci-bin"
+          cat > "$GITHUB_WORKSPACE/ci-bin/fltk-config" <<'EOF'
+          #!/bin/sh
+          /opt/homebrew/bin/fltk-config "$@" | sed -E 's/-weak_framework ([^ ]+)/-Wl,-weak_framework,\1/g'
+          EOF
+          chmod +x "$GITHUB_WORKSPACE/ci-bin/fltk-config"
+          echo "$GITHUB_WORKSPACE/ci-bin" >> "$GITHUB_PATH"
+
       - name: Show tool versions
         run: |
           uname -a
           arch
           clang++ --version
           scons --version
+          which fltk-config
           fltk-config --version || true
           fltk-config --cxxflags --ldflags --use-images --use-gl || true
 
