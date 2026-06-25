@@ -52,11 +52,11 @@ else:
 # pkgname : [ pkgconfig, [ package_names ],
 #             linux_flags, mingw_flags, c_header, cxx_header, optional ]
 
-fltkLibsLinux = '-lfltk -lfltk_images -lfltk_jpeg -lfltk_png'
-fltkLibsMinGW = fltkLibsLinux + ' -lz -lcomdlg32 -lcomctl32 -lole32'
+fltkLibsLinux = '-lfltk -lfltk_images -ljpeg -lpng -lz'
+fltkLibsMinGW = '-lfltk -lfltk_images -lfltk_jpeg -lfltk_png'
+fltkLibsMinGW = fltkLibsMinGW + ' -lz -lcomdlg32 -lcomctl32 -lole32'
 fltkLibsMinGW = fltkLibsMinGW + ' -luuid -lws2_32 -lwinmm -lgdi32'
-fltkLibsLinux = fltkLibsLinux + ' -lfltk_z -lXcursor -lXinerama -lXrender'
-fltkLibsLinux = fltkLibsLinux + ' -lXext -lXft -lXfixes -lX11 -lfontconfig -ldl'
+fltkLibsLinux = fltkLibsLinux + ' -lXcursor -lXinerama -lXrender'
 
 packageConfigs = {
     'FLTK' : [
